@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+     <title>CandyShop</title>
+<!-- 
+
+Known Template 
+
+http://www.templatemo.com/tm-516-known
+
+-->
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+     <meta name="description" content="">
+     <meta name="keywords" content="">
+     <meta name="author" content="">
+     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+     <link rel="stylesheet" href="css/bootstrap.min.css">
+     <link rel="stylesheet" href="css/font-awesome.min.css">
+     <link rel="stylesheet" href="css/owl.carousel.css">
+     <link rel="stylesheet" href="css/owl.theme.default.min.css">
+
+     <!-- подключение css -->
+     <link rel="stylesheet" href="css/style.css.css">
+
+</head>
+<body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+
+     <section class="preloader">
+          <div class="spinner">
+
+               <span class="spinner-rotate"></span>
+               
+          </div>
+     </section>
+
+
+<!-- Меню -->
+<section class="navbar custom-navbar navbar-fixed-top" role="navigation" style="padding-top: 10px; padding-bottom: 10px;">
+  <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+    <!-- Логотип -->
+    <a href="index.html" class="navbar-brand" style="display: flex; align-items: center;">
+      <img src="images/логотип.png" alt="CandyShop Logo" style="height: 50px; width: auto;">
+    </a>
+    <!-- Меню -->
+    <div class="collapse navbar-collapse" style="flex: 1; margin-left: 20px;">
+      <ul class="nav navbar-nav navbar-nav-first" style="display: flex; justify-content: flex-start; margin: 0; padding: 0;">
+        <li style="margin-right: 20px;"><a href="administrator.html" class="smoothScroll">Управление товарами</a></li>
+        <li style="margin-right: 20px;"><a href="zakaz.html" class="smoothScroll">Управление заказами</a></li>
+      </ul>
+    </div>
+    <!-- Контакт -->
+    <ul class="nav navbar-nav navbar-right" style="margin: 0;">
+      <li><a href="#"><i class="fa fa-phone"></i> +7 904 892 50 11</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- Верхняя карточка "Добавить товар" -->
+<div style="display: flex; justify-content: center; margin: 20px;">
+  <div id="addProductCard" style="width: 220px; height: 250px; background-color: #e0e0e0; border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color 0.3s;">
+    <div style="text-align: center;">
+      <div style="font-size: 48px; color: #555;">+</div>
+      <div style="margin-top: 10px; font-weight: bold; color: #333;">Добавить товар</div>
+    </div>
+  </div>
+</div>
+
+<!-- Контейнер для товаров -->
+<div id="productsContainer" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px;"></div>
+
+<!-- Форма добавления товара (скрыта по умолчанию) -->
+<div id="productFormContainer" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 999;">
+  <form id="productForm" style="background-color: #fff; padding: 30px; border-radius: 15px; max-width: 400px; width: 100%; position: relative;">
+    <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Добавить товар</h2>
+    <div style="margin-bottom: 15px;">
+      <label for="productName" style="display: block; margin-bottom: 5px; font-weight: bold;">Название товара</label>
+      <input type="text" id="productName" name="productName" placeholder="Введите название" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px;">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label for="productPrice" style="display: block; margin-bottom: 5px; font-weight: bold;">Цена</label>
+      <input type="number" id="productPrice" name="productPrice" placeholder="Введите цену" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px;">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label for="productDescription" style="display: block; margin-bottom: 5px; font-weight: bold;">Состав товара</label>
+      <textarea id="productDescription" name="productDescription" placeholder="Опишите состав" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px;"></textarea>
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label for="productImageFile" style="display: block; margin-bottom: 5px; font-weight: bold;">Фото товара</label>
+      <input type="file" id="productImageFile" accept="image/*" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px;">
+    </div>
+    <div id="previewImage" style="text-align: center; margin-bottom: 15px; min-height: 200px; display: flex; align-items: center; justify-content: center;"></div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <button type="submit" style="background-color: #4CAF50; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">Добавить</button>
+      <button type="button" id="cancelBtn" style="background-color: #f44336; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">Отмена</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const productsContainer = document.getElementById('productsContainer');
+  const addProductCard = document.getElementById('addProductCard');
+  const productFormContainer = document.getElementById('productFormContainer');
+  const productForm = document.getElementById('productForm');
+  const previewImageContainer = document.getElementById('previewImage');
+
+  let products = JSON.parse(localStorage.getItem('products')) || [];
+  let editingProductId = null;
+  let uploadedImageData = '';
+
+  // Обработка клика по карточке "Добавить товар"
+  addProductCard.addEventListener('click', () => {
+    editingProductId = null;
+    document.getElementById('productName').value = '';
+    document.getElementById('productPrice').value = '';
+    document.getElementById('productDescription').value = '';
+    uploadedImageData = '';
+    previewImageContainer.innerHTML = '';
+    document.getElementById('productForm').reset();
+    document.getElementById('productFormContainer').style.display = 'flex';
+  });
+
+  // Обработка выбора файла изображения
+  document.getElementById('productImageFile').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageData = e.target.result;
+        previewImageContainer.innerHTML = `<img src="${uploadedImageData}" style="max-width:200px; max-height:200px; object-fit:cover;">`;
+      }
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Обработка формы
+  document.getElementById('productForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('productName').value.trim();
+    const price = document.getElementById('productPrice').value.trim();
+    const description = document.getElementById('productDescription').value.trim();
+
+    if (!uploadedImageData) {
+      alert('Пожалуйста, загрузите изображение товара.');
+      return;
+    }
+
+    const productData = {
+      name,
+      price,
+      description,
+      image: uploadedImageData
+    };
+
+    if (editingProductId !== null) {
+      products[editingProductId] = productData;
+    } else {
+      products.push(productData);
+    }
+
+    localStorage.setItem('products', JSON.stringify(products));
+    renderProducts();
+    // Очистка формы
+    document.getElementById('productForm').reset();
+    uploadedImageData = '';
+    previewImageContainer.innerHTML = '';
+    document.getElementById('productFormContainer').style.display = 'none';
+  });
+
+  // Обработка отмены
+  document.getElementById('cancelBtn').addEventListener('click', () => {
+    document.getElementById('productFormContainer').style.display = 'none';
+  });
+
+  // Функция для отображения товаров
+  function renderProducts() {
+    productsContainer.innerHTML = '';
+    products.forEach((product, index) => {
+      const card = document.createElement('div');
+      card.style.width = '220px';
+      card.style.minHeight = '350px';
+      card.style.backgroundColor = '#fff';
+      card.style.borderRadius = '15px';
+      card.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+      card.style.display = 'flex';
+      card.style.flexDirection = 'column';
+      card.style.alignItems = 'center';
+      card.style.padding = '10px';
+      card.style.boxSizing = 'border-box';
+
+      // Формат отображения: добавим описание состава
+      card.innerHTML = `
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;">
+          <img src="${product.image}" style="max-width: 100%; max-height: 150px; object-fit: cover; border-radius: 10px;">
+        </div>
+        <div style="width: 100%; text-align: center; margin-top: 10px;">
+          <h5 style="margin: 5px 0;">${product.name}</h5>
+          <p style="margin: 5px 0;">Цена: ${product.price} руб.</p>
+          <p style="margin: 5px 0; font-size: 14px; color: #555;">Состав: ${product.description}</p>
+        </div>
+        <div style="width: 100%; display: flex; justify-content: space-between; margin-top: 10px;">
+          <button class="editBtn" data-index="${index}" style="background-color: #8a8a84; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">Редактировать</button>
+          <button class="deleteBtn" data-index="${index}" style="background-color: #676662; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">Удалить</button>
+        </div>
+      `;
+      productsContainer.appendChild(card);
+    });
+
+    // Назначение обработчиков для кнопок редактирования и удаления
+    document.querySelectorAll('.editBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = btn.dataset.index;
+        editProduct(index);
+      });
+    });
+    document.querySelectorAll('.deleteBtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = btn.dataset.index;
+        deleteProduct(index);
+      });
+    });
+  }
+
+  // Функция для редактирования товара
+  function editProduct(index) {
+    const product = products[index];
+    editingProductId = index;
+    document.getElementById('productName').value = product.name;
+    document.getElementById('productPrice').value = product.price;
+    document.getElementById('productDescription').value = product.description;
+    previewImageContainer.innerHTML = `<img src="${product.image}" style="max-width:200px; max-height:200px; object-fit:cover;">`;
+    uploadedImageData = product.image;
+    document.getElementById('productFormContainer').style.display = 'flex';
+  }
+
+  // Функция для удаления товара
+  function deleteProduct(index) {
+    if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+      products.splice(index, 1);
+      localStorage.setItem('products', JSON.stringify(products));
+      renderProducts();
+    }
+  }
+
+  // Изначально отображаем товары
+  renderProducts();
+</script>
+
+
+
+        <!-- Футер -->
+     <footer id="footer">
+          <div class="container">
+               <div class="row">
+
+                   <div class="col-md-4 col-sm-6">
+                    <div class="footer-info">
+                         <div class="section-title">
+                              <a href="index.html">
+                                  <img src="images/логотип 2.png" alt="CandyShop Logo" style="max-width: 100%; height: auto;">
+                              </a>
+                          </div>
+
+                              <ul class="social-icon">
+                                   <li><a href="#" class="fa fa-facebook-square" attr="facebook icon"></a></li>
+                                   <li><a href="#" class="fa fa-twitter"></a></li>
+                                   <li><a href="#" class="fa fa-instagram"></a></li>
+                              </ul>
+
+                              <div class="copyright-text"> 
+                                   <p>Авторские права &copy; 2025 CandyShop.Company</p>
+                              </div>
+                         </div>
+                    </div>
+  
+                      <div class="col-md-4 col-sm-6">
+                           <div class="footer-info">
+                                <div class="section-title">
+                                     <h2>Контактная Информация</h2>
+                                </div>
+                                <address>
+                                     <p>+7 904 892 50 11, +7 998 324 67 57</p>
+                                     <p><a href="mailto:youremail.com">CandyShop@gmail.com</a></p>
+                                </address>
+  
+                                <div class="footer_menu">
+                                     <h2>Ссылки</h2>
+                                     <ul>
+                                          <li><a href="#">Главная</a></li>
+                                          <li><a href="#">О компании</a></li>
+                                          <li><a href="#">Категории</a></li>
+                                          <li><a href="#">Отзывы</a></li>
+                                     </ul>
+                                </div>
+                           </div>
+                      </div>
+  
+                      <div class="col-md-4 col-sm-12">
+                           <div class="footer-info newsletter-form">
+                                <div class="section-title">
+                                     <h2>Обратная связь</h2>
+                                </div>
+                                <div>
+                                     <div class="form-group">
+                                          <form action="#" method="get">
+                                               <input type="email" class="form-control" placeholder="Введите email" name="email" id="email" required="">
+                                               <input type="submit" class="form-control" name="submit" id="form-submit" value="Отправить">
+                                          </form>
+                                     </div>
+                                </div>
+                           </div>
+                      </div>
+                      
+                 </div>
+            </div>
+       </footer>
+  
+  
+       <!-- SCRIPTS -->
+       <script src="js/jquery.js"></script>
+       <script src="js/bootstrap.min.js"></script>
+       <script src="js/owl.carousel.min.js"></script>
+       <script src="js/smoothscroll.js"></script>
+       <script src="js/custom.js"></script>
+       <script src="js/cart.js"></script>
+  </body>
+  </html>
